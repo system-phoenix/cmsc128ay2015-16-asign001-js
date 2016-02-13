@@ -1,5 +1,6 @@
 'use strict';
-var input = '110';
+var input = '110';4
+var string = 'one hundred ten';
 
 function numToWords(input){
 	var string = '';
@@ -17,7 +18,6 @@ function numToWords(input){
 				num = parseInt(input / i);
 				input %= i;
 
-				console.log(num);
 				if((i == 10 || i == 10000) && (num == 1)){
 					string += transNum(reserve);
 					i /= 10;
@@ -88,3 +88,15 @@ function transNum(num){
 		case 90: return 'ninety';
 	}
 }
+
+function wordsToNum(input){
+	var str = input.split(' ');
+	for(var i = 0; i < str.length; i++){
+		if(i % 2 == 0){
+
+		} else {
+
+		}
+	}
+}
+
