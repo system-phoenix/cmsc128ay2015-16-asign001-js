@@ -1,15 +1,14 @@
 'use strict';
-var input = '110';4
+var input = '110';
 var string = 'one hundred ten';
 
 function numToWords(input){
-	var string = '';
-	if(parseInt(input)){
+	var string = ''; //final string to be returned.
+	if(parseInt(input)){	//check if the input is an integer
 		input = parseInt(input);
-		if(input > 1000000){
+		if(input > 1000000){		//case that the input is too big
 			return 'Cannot parse.';
 		} else {
-			var string = '';
 			var i = 1;
 			for(; ((i <= 1000000) && (i * 10 <= input)); i *= 10);
 			var origI = i;
@@ -168,5 +167,20 @@ function multiplier(index){
 		case 'thousand': return 1000;
 		case 'hundred': return 100;
 		default: return;
+	}
+}
+
+function numberDelimited(input, delimiter, spaces){
+	if(delimiter.length == 1){
+		input = input.toString();
+		var res = '';
+		var counter = 0;
+		for(var i = input.length - 1; i >= 0; i--, counter++){
+			if(counter % spaces == 0 && counter != 0) res = delimiter + res;
+			res = input.charAt(i) + res;
+		}
+		return res;
+	} else{
+		return 'Invalid delimiter.';
 	}
 }
