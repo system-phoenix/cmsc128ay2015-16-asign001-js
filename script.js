@@ -102,14 +102,23 @@ function transNum(num){
 
 function wordsToNum(input){
 	var str = input.split(' ');
-	var res = 0;
+	var res = 0, sub = false, subRes = 0;
 	for(var i = 0; i < str.length; i++){
-		if(i % 2 == 0){
-			res += toNum(str[i]);
-		} else {
-
+		if(str[i] == '') continue;
+		var n = toNum(str[i]);
+		if(n != -1){
+			if(!sub) res += n;
+			else subRes += n;
+		} else{
+			n = multiplier(str[i]);
+			if(!n) return 'Cannot parse';
+			if(!sub)res *= n;
+			else subRes *= n;
+			if(n == 1000) sub = true;
 		}
 	}
+	res += subRes;
+	return res;
 }
 
 function toNum(num){
@@ -141,6 +150,7 @@ function toNum(num){
 		case 'seventy': return 70;
 		case 'eighty': return 80;
 		case 'ninety': return 90;
+		default: return -1;
 	}
 }
 
@@ -149,5 +159,6 @@ function multiplier(index){
 		case 'million': return 1000000;
 		case 'thousand': return 1000;
 		case 'hundred': return 100;
+		default: return;
 	}
 }
