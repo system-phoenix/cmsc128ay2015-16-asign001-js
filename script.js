@@ -10,7 +10,7 @@ function numToWords(input){
 			return 'Cannot parse.';
 		} else {
 			if(input == 0){
-				return transNum(input);
+				return transNum(input);	//a very special case where only the value 0 is entered
 			} else {
 				var i = 1;		//initialize i
 				for(; ((i <= 1000000) && (i * 10 <= input)); i *= 10);		//compute for the maximum value of i
@@ -21,29 +21,29 @@ function numToWords(input){
 					reserve = parseInt(input *	 10 / i);	//holds the values of special cases. eg. 11, 12, etc
 					num = parseInt(input / i);				//holds what to be converted in normal cases
 					input %= i;								//remove the number currently being converted
-					if(!num == 0){
-						next = true;
-						if((i == 10 || i == 10000) && (num == 1)){
+					if(!num == 0){							//if the next number to converted is not 0
+						next = true;						//enable the checker for its place value
+						if((i == 10 || i == 10000) && (num == 1)){		//also, find the appropriate equivalent string for the number
 							string += ' ' + transNum(reserve);
-							i /= 10;
+							i /= 10;			//special case of 10 to 19
 							input %= i;
 						} else {
 							if(i == 10 || i == 10000){
 								num *= 10;
-								string += ' ' + transNum(num);
+								string += ' ' + transNum(num);		//special case of 20, 30, ..., 90
 								continue;
 							} else {
-								string += ' ' + transNum(num);
+								string += ' ' + transNum(num);		//normal cases
 							}
 						}
 					}
 					if(str == ' thousand' && num == 0){
-						next = false;
+						next = false; //if the past place holder is of thousand, disable the next boolean to prevent adding unnecessary 'hundred'
 					}
 					if(next){
-						str = transIndex(i);
-						string += str;
-						if(num == 0) next = false;
+						str = transIndex(i);		//check for the place holder
+						string += str;				//add it to the string
+						if(num == 0) next = false;	//for cases of hundred thousand
 					}
 				}
 				return string;
@@ -52,7 +52,7 @@ function numToWords(input){
 	} else return 'Not a number.';
 }
 
-function transIndex(i){
+function transIndex(i){ //gives the placed holder of the values
 	switch(i){
 		case 1000000:
 			return ' million';
@@ -68,7 +68,7 @@ function transIndex(i){
 	}
 }
 
-function transNum(num){
+function transNum(num){	//gives the word conversion of values, all cases
 	switch(num){
 		case 0: return 'zero';
 		case 1: return 'one';
@@ -102,35 +102,35 @@ function transNum(num){
 }
 
 function wordsToCurrency(input, currency){
-	input = wordsToNum(input);
-	if(parseInt(input)){
-		if(currency == 'USD' || currency == 'PHP' || currency == 'JPY') return currency + input;
-		else return 'Unknown currency.';
-	}
+	input = wordsToNum(input); //convert the input to number first
+	if(parseInt(input)){		//if it is an actual number
+		if(currency == 'USD' || currency == 'PHP' || currency == 'JPY') return currency + input;	//add the stated currency
+		else return 'Unknown currency.';	//if the currency is not in the option
+	} else return 'Not a number.';
 }
 
 function wordsToNum(input){
-	var str = input.split(' ');
-	var res = 0, sub = false, subRes = 0;
-	for(var i = 0; i < str.length; i++){
-		if(str[i] == '') continue;
-		var n = toNum(str[i]);
-		if(n != -1){
-			if(!sub) res += n;
+	var str = input.split(' ');				//split the input through the spaces
+	var res = 0, sub = false, subRes = 0;	//res is returned, sub is a checker for thousand values, and subRes is for after the thousand value
+	for(var i = 0; i < str.length; i++){	//traverse throught the array
+		if(str[i] == '') continue;			//if it is a blank character, skip it
+		var n = toNum(str[i]);				//convert the word to a number
+		if(n != -1){						//if the word is a number in the list
+			if(!sub) res += n;				//add it to the result
 			else subRes += n;
-		} else{
-			n = multiplier(str[i]);
-			if(!n) return 'Cannot parse';
-			if(!sub)res *= n;
+		} else{								//if the word is not a number in the list
+			n = multiplier(str[i]);			//maybe it is a multiplier to find the correct place value of the number
+			if(!n) return 'Cannot parse';	//if still not, return an error
+			if(!sub)res *= n;				//multiply the result with it
 			else subRes *= n;
-			if(n == 1000) sub = true;
+			if(n == 1000) sub = true;		//if the thousand multiplier is found, activate the subRes
 		}
 	}
-	res += subRes;
+	res += subRes;				//add the final values
 	return res;
 }
 
-function toNum(num){
+function toNum(num){		//gives the actual value of the word numbers, returns -1 if the word is not found
 	switch(num){
 		case 'zero': return 0;
 		case 'one': return 1;
@@ -164,7 +164,7 @@ function toNum(num){
 	}
 }
 
-function multiplier(index){
+function multiplier(index){			//gives the possible multipliers, returns undefined if not on the list
 	switch(index){
 		case 'million': return 1000000;
 		case 'thousand': return 1000;
@@ -174,16 +174,18 @@ function multiplier(index){
 }
 
 function numberDelimited(input, delimiter, spaces){
-	if(delimiter.length == 1){
-		input = input.toString();
-		var res = '';
-		var counter = 0;
-		for(var i = input.length - 1; i >= 0; i--, counter++){
-			if(counter % spaces == 0 && counter != 0) res = delimiter + res;
-			res = input.charAt(i) + res;
-		}
-		return res;
+	if(delimiter.length == 1){			//check for the character
+		if(input <= 1000000){			//check if the value is within the range
+			input = input.toString();		//turn the input into a string for faster parsing
+			var res = '';					//to be returned
+			var counter = 0;				//counts the indeces to decide when to place the delimiter
+			for(var i = input.length - 1; i >= 0; i--, counter++){
+				if(counter % spaces == 0 && counter != 0) res = delimiter + res;		//reform the input to inlude the delimiters
+				res = input.charAt(i) + res;
+			}
+			return res;						//return the new version of the input, with delimiters
+		} else return 'Cannot parse.';
 	} else{
-		return 'Invalid delimiter.';
+		return 'Invalid delimiter.';	//if it is not a character, return an error
 	}
 }
