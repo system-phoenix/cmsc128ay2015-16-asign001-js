@@ -12,28 +12,34 @@ function numToWords(input){
 			var string = '';
 			var i = 1;
 			for(; ((i <= 1000000) && (i * 10 <= input)); i *= 10);
+			var origI = i;
+			var next = true;
 			var reserve, num;
 			for(; i >= 1; i /= 10){
 				reserve = parseInt(input * 10 / i);
 				num = parseInt(input / i);
 				input %= i;
 
-				if((i == 10 || i == 10000) && (num == 1)){
-					string += transNum(reserve);
-					i /= 10;
-					input %= i;
-				} else {
-					if(i == 10 || i == 10000){
-						num *= 10;
-						string += transNum(num) + '-';
-						continue;
-					} else {
-						string += transNum(num);
+				if(!origI > i || !num == 0){
+					next = true;
+					if((i == 10 || i == 10000) && (num == 1)){
+						string += ' ' + transNum(reserve);
+						i /= 10;
+						in i;
+					} else {put %=
+						if(i == 10 || i == 10000){
+							num *= 10;
+							string += ' ' + transNum(num);
+							continue;
+						} else {
+							string += ' ' + transNum(num);
+						}
 					}
-				}
-				string += transIndex(i);
-				if(input == 0) break;
-			}
+				} 
+				if(next){
+					string += transIndex(i);
+					if(num == 0) next = false;
+				}			}
 			return string;
 
 		}
@@ -43,13 +49,13 @@ function numToWords(input){
 function transIndex(i){
 	switch(i){
 		case 1000000:
-			return ' million ';
+			return ' million';
 		case 100000:
 		case 100:
-			return ' hundred ';
+			return ' hundred';
 		case 10000:
 		case 1000:
-			return ' thousand ';
+			return ' thousand';
 		case 10:
 		case 1:
 			return '';
@@ -91,9 +97,10 @@ function transNum(num){
 
 function wordsToNum(input){
 	var str = input.split(' ');
+	var res = 0;
 	for(var i = 0; i < str.length; i++){
 		if(i % 2 == 0){
-
+			res += toNum(str[i]);
 		} else {
 
 		}
@@ -129,5 +136,13 @@ function toNum(num){
 		case 'seventy': return 70;
 		case 'eighty': return 80;
 		case 'ninety': return 90;
+	}
+}
+
+function multiplier(index){
+	switch(index){
+		case 'million': return 1000000;
+		case 'thousand': return 1000;
+		case 'hundred': return 100;
 	}
 }
