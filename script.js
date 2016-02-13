@@ -103,6 +103,8 @@ function transNum(num){
 function wordsToCurrency(input, currency){
 	input = wordsToNum(input);
 	if(parseInt(input)){
+		if(currency == 'USD' || currency == 'PHP' || currency == 'JPY') return currency + input;
+		else return 'Unknown currency.';
 	}
 }
 
