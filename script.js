@@ -100,6 +100,12 @@ function transNum(num){
 	}
 }
 
+function wordsToCurrency(input, currency){
+	input = wordsToNum(input);
+	if(parseInt(input)){
+	}
+}
+
 function wordsToNum(input){
 	var str = input.split(' ');
 	var res = 0, sub = false, subRes = 0;
