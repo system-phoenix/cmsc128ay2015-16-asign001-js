@@ -15,18 +15,18 @@ function numToWords(input){
 			var origI = i;
 			var next = true;
 			var reserve, num;
+			var str = '';
 			for(; i >= 1; i /= 10){
 				reserve = parseInt(input * 10 / i);
 				num = parseInt(input / i);
 				input %= i;
-
 				if(!origI > i || !num == 0){
 					next = true;
 					if((i == 10 || i == 10000) && (num == 1)){
 						string += ' ' + transNum(reserve);
 						i /= 10;
-						in i;
-					} else {put %=
+						input %= i;
+					} else {
 						if(i == 10 || i == 10000){
 							num *= 10;
 							string += ' ' + transNum(num);
@@ -35,11 +35,16 @@ function numToWords(input){
 							string += ' ' + transNum(num);
 						}
 					}
-				} 
+				}
+				if(str == ' thousand' && num == 0){
+					next = false;
+				}
 				if(next){
-					string += transIndex(i);
+					str = transIndex(i);
+					string += str;
 					if(num == 0) next = false;
-				}			}
+				}
+			}
 			return string;
 
 		}
