@@ -4,48 +4,50 @@ var string = 'one hundred ten';
 
 function numToWords(input){
 	var string = ''; //final string to be returned.
-	if(parseInt(input)){	//check if the input is an integer
+	if(parseInt(input) || input == '0' || input == 0){	//check if the input is an integer
 		input = parseInt(input);
 		if(input > 1000000){		//case that the input is too big
 			return 'Cannot parse.';
 		} else {
-			var i = 1;
-			for(; ((i <= 1000000) && (i * 10 <= input)); i *= 10);
-			var origI = i;
-			var next = true;
-			var reserve, num;
-			var str = '';
-			for(; i >= 1; i /= 10){
-				reserve = parseInt(input * 10 / i);
-				num = parseInt(input / i);
-				input %= i;
-				if(!origI > i || !num == 0){
-					next = true;
-					if((i == 10 || i == 10000) && (num == 1)){
-						string += ' ' + transNum(reserve);
-						i /= 10;
-						input %= i;
-					} else {
-						if(i == 10 || i == 10000){
-							num *= 10;
-							string += ' ' + transNum(num);
-							continue;
+			if(input == 0){
+				return transNum(input);
+			} else {
+				var i = 1;		//initialize i
+				for(; ((i <= 1000000) && (i * 10 <= input)); i *= 10);		//compute for the maximum value of i
+				var next = true;	//comfirms the need to include another place value, eg. thousand, hundred, etc
+				var reserve, num;
+				var str = '';	//holds the place value
+				for(; i >= 1; i /= 10){		//start the loop that actually converts the numbers to words
+					reserve = parseInt(input *	 10 / i);	//holds the values of special cases. eg. 11, 12, etc
+					num = parseInt(input / i);				//holds what to be converted in normal cases
+					input %= i;								//remove the number currently being converted
+					if(!num == 0){
+						next = true;
+						if((i == 10 || i == 10000) && (num == 1)){
+							string += ' ' + transNum(reserve);
+							i /= 10;
+							input %= i;
 						} else {
-							string += ' ' + transNum(num);
+							if(i == 10 || i == 10000){
+								num *= 10;
+								string += ' ' + transNum(num);
+								continue;
+							} else {
+								string += ' ' + transNum(num);
+							}
 						}
 					}
+					if(str == ' thousand' && num == 0){
+						next = false;
+					}
+					if(next){
+						str = transIndex(i);
+						string += str;
+						if(num == 0) next = false;
+					}
 				}
-				if(str == ' thousand' && num == 0){
-					next = false;
-				}
-				if(next){
-					str = transIndex(i);
-					string += str;
-					if(num == 0) next = false;
-				}
+				return string;
 			}
-			return string;
-
 		}
 	} else return 'Not a number.';
 }
@@ -130,6 +132,7 @@ function wordsToNum(input){
 
 function toNum(num){
 	switch(num){
+		case 'zero': return 0;
 		case 'one': return 1;
 		case 'two': return 2;
 		case 'three': return 3;
